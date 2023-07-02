@@ -1,0 +1,12 @@
+.root {
+    -fx-background-color:white;
+}
+
+.button {
+    -fx-background-color: #4C8577;
+    -fx-text-fill: white;
+}
+
+#titleNewAccount {
+    -fx-text-fill: #4C8577;
+}
