@@ -8,7 +8,7 @@
 <VBox alignment="CENTER" prefHeight="220.0" prefWidth="201.0" spacing="20.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.waubenwissel.Controller">
    <children>
       <Label fx:id="label" text="Mika Wauben" />
-      <Button fx:id="excelButton" onAction="#makeExcelFile" text="Turn into excel" />
+      <Button fx:id="excelButton" onAction="#openExcelFile" text="Turn into excel" />
       <Button fx:id="PngButton" onAction="#makePngFile" text="Turn into png" />
       <Button fx:id="WhatsappButton" onAction="#sendWhatsapp" text="Send with whatsapp" />
    </children>
