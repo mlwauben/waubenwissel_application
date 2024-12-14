@@ -1,0 +1,1 @@
+- create uberjar by running 'mvn clean package' in the terminal
