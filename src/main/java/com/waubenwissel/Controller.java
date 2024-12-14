@@ -41,7 +41,7 @@ public class Controller {
         //Fill the file
         fillExcelFile(sheet);
 
-        File file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.xlsx");
+        File file = getFile(".xlsx");
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             workbook.write(outputStream);
         } catch (Exception e) {
@@ -50,6 +50,17 @@ public class Controller {
 
         workbook.close();
 
+        return file;
+    }
+
+    private File getFile(String type) {
+        File desktopDir = new File(System.getProperty("user.home"), "Desktop");
+        String pathToDesktop = desktopDir.getPath();
+        String s = "testWisselschema";
+        File file = new File(pathToDesktop+System.getProperty("file.separator") + s + type);
+        if (System.getProperty("user.name").equals("mikaw")) {
+            file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema" + type);
+        }
         return file;
     }
 
@@ -76,8 +87,9 @@ public class Controller {
         
         Worksheet sheet = workbook.getWorksheets().get(0);
 
-        sheet.saveToImage("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.png");
-        File file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.png");
+        File file = getFile(".png");
+
+        sheet.saveToImage(file.getAbsolutePath());
         try {
             Desktop.getDesktop().open(file);
         } catch (Exception e) {
