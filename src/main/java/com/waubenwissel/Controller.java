@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.awt.Desktop;
@@ -11,13 +12,26 @@ import java.awt.Desktop;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
+import com.spire.xls.*;
+//import com.spire.xls.Workbook;
+
 public class Controller {
 
     @FXML
     private Label label;
 
     @FXML
-    private void makeExcelFile() throws IOException {
+    private void openExcelFile() throws IOException {
+        //Put file on the desktop and open it
+        File file = makeExcelFile();
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (Exception e) {
+            System.out.println("File not closed");
+        }
+    }
+
+    private File makeExcelFile() throws IOException {
         //Create excel file
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("First Sheet");
@@ -29,31 +43,38 @@ public class Controller {
         Cell cell = row.createCell(0);
         cell.setCellValue(labelText);
 
-
-        //Put file on the desktop and open it
         File file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.xlsx");
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             workbook.write(outputStream);
-            Desktop.getDesktop().open(file);
         } catch (Exception e) {
             System.out.println("File not closed");
         }
 
-        //Close workbook
-        try {
-            workbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        workbook.close();
+
+        return file;
     }
 
     @FXML
     private void makePngFile() throws IOException {
-        App.setRoot("secondary");
+        com.spire.xls.Workbook workbook = new com.spire.xls.Workbook();
+
+        workbook.loadFromFile(makeExcelFile().getAbsolutePath());
+        
+        Worksheet sheet = workbook.getWorksheets().get(0);
+
+        sheet.saveToImage("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.png");
+        File file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.png");
+        try {
+            Desktop.getDesktop().open(file);
+        } catch (Exception e) {
+            System.out.println("File not closed");
+        }
     }
 
     @FXML
     private void sendWhatsapp() throws IOException {
-        App.setRoot("secondary");
+        System.out.println("whatsapp message sent");
     }
 }
+ 

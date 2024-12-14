@@ -3,6 +3,7 @@ module com.waubenwissel {
     requires javafx.fxml;
     requires org.apache.poi.ooxml;
     requires java.desktop;
+    requires spire.xls;
 
     opens com.waubenwissel to javafx.fxml;
     exports com.waubenwissel;
