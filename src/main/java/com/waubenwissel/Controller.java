@@ -3,6 +3,7 @@ package com.waubenwissel;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -13,12 +14,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 import com.spire.xls.*;
+
 //import com.spire.xls.Workbook;
 
 public class Controller {
 
     @FXML
-    private Label label;
+    private Label place1, place2, place3, place4, player1, player2, player3, player4;
 
     @FXML
     private void openExcelFile() throws IOException {
@@ -37,11 +39,7 @@ public class Controller {
         Sheet sheet = workbook.createSheet("First Sheet");
 
         //Fill the file
-        String labelText = label.getText();
-
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(labelText);
+        fillExcelFile(sheet);
 
         File file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema.xlsx");
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
@@ -53,6 +51,21 @@ public class Controller {
         workbook.close();
 
         return file;
+    }
+
+    private void fillExcelFile(Sheet sheet) {
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellValue(place1.getText());
+
+        Cell cell2 = row.createCell(1);
+        cell2.setCellValue(place2.getText());
+
+        Cell cell3 = row.createCell(2);
+        cell3.setCellValue(place3.getText());
+
+        Cell cell4 = row.createCell(3);
+        cell4.setCellValue(place4.getText());
     }
 
     @FXML
@@ -70,11 +83,6 @@ public class Controller {
         } catch (Exception e) {
             System.out.println("File not closed");
         }
-    }
-
-    @FXML
-    private void sendWhatsapp() throws IOException {
-        System.out.println("whatsapp message sent");
     }
 }
  

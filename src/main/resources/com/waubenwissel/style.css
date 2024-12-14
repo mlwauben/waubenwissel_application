@@ -1,0 +1,21 @@
+/* Label styling */
+.label {
+    -fx-text-fill: #27005e;
+    -fx-padding: 5px;
+    -fx-font-family: "Helvetica Neue", sans-serif;
+}
+
+/* Button styling */
+.button {
+    -fx-background-color: #0078d4;  /* Button color */
+    -fx-text-fill: white;           /* Text color */
+    -fx-border-radius: 5px;
+    -fx-cursor: hand;                /* Changes cursor to pointer */
+    -fx-font-family: "Helvetica Neue", sans-serif;
+}
+
+/* Hover effect for buttons */
+.button:hover {
+    -fx-background-color: #005a9e;
+    -fx-font-family: "Helvetica Neue", sans-serif;
+}
