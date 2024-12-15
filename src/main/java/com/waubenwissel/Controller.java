@@ -1,26 +1,41 @@
 package com.waubenwissel;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.awt.Desktop;
+import com.spire.xls.Worksheet;
+import com.waubenwissel.GUIobjects.Place;
+import com.waubenwissel.GUIobjects.Player;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-
-import com.spire.xls.*;
-
-//import com.spire.xls.Workbook;
+import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 
 public class Controller {
 
     @FXML
-    private Label place1, place2, place3, place4, player1, player2, player3, player4;
+    private VBox playerList, placesList;
+
+    @FXML
+    public void initialize() {
+        String[] names = {"Mika", "Zea", "Pascal", "Brendy"};
+        for (String name : names) {
+            playerList.getChildren().add(new Player(name));
+        }
+
+        String[] places = {"Voor", "Midden", "Achter", "Bank"};
+        for (String place : places) {
+            placesList.getChildren().add(new Place(place));
+        }
+    }
 
     @FXML
     private void openExcelFile() throws IOException {
@@ -65,31 +80,24 @@ public class Controller {
     }
 
     private void fillExcelFile(Sheet sheet) {
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(place1.getText());
-
-        Cell cell2 = row.createCell(1);
-        cell2.setCellValue(place2.getText());
-
-        Cell cell3 = row.createCell(2);
-        cell3.setCellValue(place3.getText());
-
-        Cell cell4 = row.createCell(3);
-        cell4.setCellValue(place4.getText());
+        Row row = sheet.createRow(2);
+        int i = 0;
+        for (Node place : placesList.getChildren()) {
+            Cell cell = row.createCell(i);
+            cell.setCellValue(((Place) place).getText());
+            i++;
+        }
     }
 
     @FXML
     private void makePngFile() throws IOException {
         com.spire.xls.Workbook workbook = new com.spire.xls.Workbook();
-
         workbook.loadFromFile(makeExcelFile().getAbsolutePath());
-        
         Worksheet sheet = workbook.getWorksheets().get(0);
 
         File file = getFile(".png");
-
         sheet.saveToImage(file.getAbsolutePath());
+
         try {
             Desktop.getDesktop().open(file);
         } catch (Exception e) {
