@@ -1,3 +1,4 @@
+@SuppressWarnings("module")
 module waubenwissel.application {
     exports com.waubenwissel;
 
