@@ -11,5 +11,4 @@ module waubenwissel.application {
     requires org.apache.poi.poi;
     requires spire.xls;
     opens com.waubenwissel to javafx.fxml;
-
 }
