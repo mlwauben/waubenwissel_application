@@ -7,7 +7,7 @@ module waubenwissel.application {
     requires transitive javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
-    requires org.apache.poi.ooxml;
+    requires transitive org.apache.poi.ooxml;
     requires org.apache.poi.poi;
     requires spire.xls;
     opens com.waubenwissel to javafx.fxml;
