@@ -20,6 +20,8 @@ import com.waubenwissel.GUIobjects.Setup;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -37,13 +39,13 @@ public class FileManager {
         }
     }
 
-    public static File makeExcelFile(HBox anchorPane) throws IOException {
+    public static File makeExcelFile(TabPane quarterTabs) throws IOException {
         //Create excel file
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("First Sheet");
 
         //Fill the file
-        fillExcelFile(sheet, anchorPane);
+        fillExcelFile(sheet, quarterTabs);
 
         File file = getFile(".xlsx");
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
@@ -57,27 +59,30 @@ public class FileManager {
         return file;
     }
 
-    public static void fillExcelFile(Sheet sheet, HBox anchorPane) {
+    public static void fillExcelFile(Sheet sheet, TabPane quarterTabs) {
         int i = 0;
         int j = 2;
-        for (Node setup : anchorPane.getChildren()) {
-            Row row = sheet.createRow(j);
-            Setup s = (Setup) setup;
-            for (Node place : s.getChildren()) {
-                Place p = (Place) place;
-
-                Cell cell = row.createCell(i);
-                cell.setCellValue(p.getText());
-                i++;
+        for (Tab tab : quarterTabs.getTabs()) {
+            HBox contentPane = (HBox) tab.getContent(); 
+            for (Node setup : contentPane.getChildren()) {
+                Row row = sheet.createRow(j);
+                Setup s = (Setup) setup;
+                for (Node place : s.getChildren()) {
+                    Place p = (Place) place;
+    
+                    Cell cell = row.createCell(i);
+                    cell.setCellValue(p.getText());
+                    i++;
+                }
+                j++;
+                i = 0;
             }
-            j++;
-            i = 0;
         }
     }
 
-    public static void makePng(HBox anchorPane) throws IOException {
+    public static void makePng(TabPane quarterTabs) throws IOException {
         com.spire.xls.Workbook workbook = new com.spire.xls.Workbook();
-        workbook.loadFromFile(makeExcelFile(anchorPane).getAbsolutePath());
+        workbook.loadFromFile(makeExcelFile(quarterTabs).getAbsolutePath());
         Worksheet sheet = workbook.getWorksheets().get(0);
     
         File file = getFile(".png");

@@ -7,15 +7,56 @@
 
 /* Button styling */
 .button {
-    -fx-background-color: #0078d4;  /* Button color */
+    -fx-background-color: #004936;  /* Button color */
     -fx-text-fill: white;           /* Text color */
     -fx-border-radius: 5px;
     -fx-cursor: hand;                /* Changes cursor to pointer */
     -fx-font-family: "Helvetica Neue", sans-serif;
+    -fx-font-weight: bold;
 }
 
 /* Hover effect for buttons */
 .button:hover {
-    -fx-background-color: #005a9e;
+    -fx-background-color: #003023;
     -fx-font-family: "Helvetica Neue", sans-serif;
+}
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane {
+    -fx-tab-min-width:90px;
+}
+
+.tab {
+    -fx-background-insets: 0 1 0 1,0,0;
+    -fx-pref-height: 30;
+    -fx-cursor: HAND;
+    -fx-font-family: "Helvetica Neue", sans-serif;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #e6e6e6;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #004936;
+}
+
+.tab .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #828282;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label { 
+    -fx-alignment: CENTER;
+    -fx-text-fill: #FFFFFF;
+}
+
+.tab-pane:top *.tab-header-area {
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.416667em 0.166667em 0.0em 0.0em;
 }

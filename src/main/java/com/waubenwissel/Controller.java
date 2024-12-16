@@ -7,6 +7,8 @@ import java.io.IOException;
 import com.waubenwissel.GUIobjects.Setup;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -15,14 +17,17 @@ public class Controller {
     @FXML
     private VBox playerList;
     @FXML
-    private HBox anchorPane;
+    private TabPane quarterTabs;
 
     @FXML
     public void initialize() {
         FileManager.readInPlayers(playerList);
-
-        anchorPane.getChildren().add(new Setup());
-        anchorPane.getChildren().add(new Setup());
+ 
+        for (Tab tab : quarterTabs.getTabs()) {
+            HBox contentPane = (HBox) tab.getContent(); 
+            contentPane.getChildren().add(new Setup());
+            contentPane.getChildren().add(new Setup());
+        }
     }
 
     /**
@@ -32,7 +37,7 @@ public class Controller {
     @FXML
     private void openExcelFile() throws IOException {
         //Put file on the desktop and open it
-        File file = FileManager.makeExcelFile(anchorPane);
+        File file = FileManager.makeExcelFile(quarterTabs);
         try {
             Desktop.getDesktop().open(file);
         } catch (Exception e) {
@@ -46,7 +51,7 @@ public class Controller {
      */
     @FXML
     private void makePngFile() throws IOException {
-        FileManager.makePng(anchorPane);
+        FileManager.makePng(quarterTabs);
     }
 }
  
