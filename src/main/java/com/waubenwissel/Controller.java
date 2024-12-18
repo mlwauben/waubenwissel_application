@@ -36,7 +36,6 @@ public class Controller {
      */
     @FXML
     private void openExcelFile() throws IOException {
-        //Put file on the desktop and open it
         File file = FileManager.makeExcelFile(quarterTabs);
         try {
             Desktop.getDesktop().open(file);
