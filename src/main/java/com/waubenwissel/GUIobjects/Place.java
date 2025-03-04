@@ -1,16 +1,18 @@
 package com.waubenwissel.GUIobjects;
 
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
-public class Place extends Label {
-    private String mainName;
+public abstract class Place extends Label {
+    public String mainName;
     
     public Place(String mainName, String name) {
         this.mainName = mainName;
         setText(name);
+        setPrefWidth(100);
+        setAlignment(Pos.CENTER);
         //Checks if the dragged label has text
         setOnDragOver(event -> {
             if (event.getGestureSource() != this && event.getDragboard().hasString()) {
@@ -18,7 +20,6 @@ public class Place extends Label {
             }
             event.consume();
         });
-
         //prints the text of the dragged label to the Place
         setOnDragDropped(e -> {
             Dragboard dragboard = e.getDragboard();
@@ -27,57 +28,25 @@ public class Place extends Label {
             if (dragboard.hasString()) {
                 Setup setup = (Setup) getParent();
                 String dragged = dragboard.getString();
-        
-                if (isMainTeamPlace(setup)) {
-                    success = handleMainTeamPlace(setup, dragged);
-                } else {
-                    success = handleSubsOrCornerPlace(dragged);
-                }
+                success = handlePlace(setup, dragged);
+                setup.checkAndAdvanceSetup();
             }
         
             e.setDropCompleted(success);
             e.consume();
         });
     }
-        
-    private boolean isMainTeamPlace(Setup setup) {
-        return setup.getMainNames().contains(this.mainName);
-    }
     
-    private boolean handleMainTeamPlace(Setup setup, String dragged) {
-        System.out.println(setup.getTeam().toString());
-        if (setup.getTeam().contains(dragged)) {
-            resetExistingPlace(setup, dragged);
-        }
-        setup.replacePlace(this.getText(), dragged);
-        this.setText(dragged);
-        return true;
-    }
-    
-    private void resetExistingPlace(Setup setup, String dragged) {
-        for (Node node : setup.getChildren()) {
-            Place place = (Place) node;
-            if (dragged.equals(place.getText()) && setup.getMainNames().contains(place.getMainName())) {
-                //If the new place has no name, put the main name in the old place
-                if (this.mainName.equals(this.getText())) {
-                    place.setText(place.getMainName());
-                    setup.replacePlace(dragged, place.getMainName());
-                //Else if the new place has a name, switch the names around
-                } else {
-                    place.setText(this.getText());
-                }
-                break;
-            }
-        }
-    }
-    
-    private boolean handleSubsOrCornerPlace(String dragged) {
-        // TODO: Add validation logic for subs/corner if necessary
-        this.setText(dragged);
-        return true;
-    }
+    abstract public void resetExistingPlace(Setup setup, String dragged);
+
+    abstract public boolean handlePlace(Setup setup, String dragged);
+
 
     public String getMainName() {
         return mainName;
+    }
+
+    public boolean isFilled() {
+        return !this.getText().equals(mainName);
     }
 }

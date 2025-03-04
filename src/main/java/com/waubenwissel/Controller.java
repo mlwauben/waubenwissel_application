@@ -22,11 +22,23 @@ public class Controller {
     @FXML
     public void initialize() {
         FileManager.readInPlayers(playerList);
- 
-        for (Tab tab : quarterTabs.getTabs()) {
-            HBox contentPane = (HBox) tab.getContent(); 
-            contentPane.getChildren().add(new Setup());
-            contentPane.getChildren().add(new Setup());
+
+        Setup[] setups = new Setup[8];
+
+        for (int i = 0; i < setups.length; i++) {
+            setups[i] = new Setup(null);
+        }
+
+        for (int i = 0; i < 7; i++) {
+            setups[i].setNextSetup(setups[i+1]);
+        }
+
+        for (int i = 0; i < quarterTabs.getTabs().size(); i++) {
+            Tab tab = quarterTabs.getTabs().get(i);
+            HBox contentPane = (HBox) tab.getContent();
+
+            contentPane.getChildren().add(setups[i * 2]);
+            contentPane.getChildren().add(setups[i * 2 + 1]);
         }
     }
 
