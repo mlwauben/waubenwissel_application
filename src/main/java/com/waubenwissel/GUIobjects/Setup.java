@@ -3,9 +3,9 @@ package com.waubenwissel.GUIobjects;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
-import javafx.scene.Node;
 import javafx.scene.layout.FlowPane;
 
 public class Setup extends FlowPane {
@@ -23,6 +23,7 @@ public class Setup extends FlowPane {
 
     //Connection between main names and their places
     private Map<String, Place> placeMap = new HashMap<>();
+
     private Setup nextSetup;
     
     public Setup(Setup nextSetup) {
@@ -95,7 +96,9 @@ public class Setup extends FlowPane {
             team.remove(oldPlace);
             team.add(newPlace);
         }
+    }
 
+    public void replaceFieldPlayer(String oldPlace, String newPlace) {
         if (!(fieldPlayers.contains(oldPlace) && fieldPlayers.contains(newPlace))) {
             fieldPlayers.remove(oldPlace);
             fieldPlayers.add(newPlace);
@@ -116,6 +119,10 @@ public class Setup extends FlowPane {
         }
     }
 
+    public void setNextSetup(Setup nextSetup) {
+        this.nextSetup = nextSetup;
+    }
+
     public void updatePlaceMap(Place p) {
         placeMap.put(p.getMainName(), p);
     }
@@ -133,25 +140,61 @@ public class Setup extends FlowPane {
         if (allFilled) {
             updateNextSetup();
         }
-        //Remove after testing
-        updateNextSetup();
     }
 
-    //TODO next step is to update the subs accordingly
     public void updateNextSetup() {
         System.out.println("next setup filled in");
         if (nextSetup == null) {
             return;
         }
-        
-        for (Node place : nextSetup.getChildren()) {
-            Place p = (Place) place;
-            String placeName = p.getMainName();
-            p.setText(placeMap.get(placeName).getText());
-        }
-    }
 
-    public void setNextSetup(Setup nextSetup) {
-        this.nextSetup = nextSetup;
+        // Step 1: Create a mapping for the next setup
+        Map<String, String> newAssignments = new HashMap<>();
+
+        // Step 2: Copy current field players to the next setup
+        for (String fieldPlace : mainNames) {
+            newAssignments.put(fieldPlace, placeMap.get(fieldPlace).getText());
+        }
+
+        // Step 3: Handle substitutions
+        String[] subs = {"WISSEL1", "WISSEL2", "WISSEL3", "WISSEL4", "WISSEL5"};
+        String[] benchPlaces = {"BANK1", "BANK2", "BANK3", "BANK4", "BANK5"};
+
+        for (int i = 0; i < subs.length; i++) {
+            String subSpot = subs[i];
+            String benchSpot = benchPlaces[i];
+
+            Place subPlace = placeMap.get(subSpot);
+            Place benchPlace = placeMap.get(benchSpot);
+            Place subInField = null;
+            for (Entry<String, Place> e : placeMap.entrySet()) {
+                if (getMainNames().contains(e.getKey())) {
+                    if (e.getValue().getText() == subPlace.getText()) {
+                        subInField = e.getValue();
+                        break;
+                    }
+                }
+            }
+
+            if (subPlace != null && benchPlace != null) {
+                String subPlayer = subPlace.getText();
+                String benchPlayer = benchPlace.getText();
+
+                // Only swap if a sub has been chosen
+                if (!subPlayer.equals(subSpot)) {  
+                    newAssignments.put(benchSpot, subPlayer); // Sub moves to bench
+                    newAssignments.put(subSpot, subSpot);     // Reset sub spot
+                    newAssignments.put(subInField.getMainName(), benchPlayer); // Bench moves to field
+                }
+            }
+        }
+
+        // Step 4: Apply assignments to the next setup
+        for (Map.Entry<String, String> entry : newAssignments.entrySet()) {
+            Place nextPlace = nextSetup.getPlaceByName(entry.getKey());
+            if (nextPlace != null) {
+                nextPlace.setText(entry.getValue());
+            }
+        }
     }
 }

@@ -13,6 +13,9 @@ public class MainPlace extends Place {
             resetExistingPlace(setup, dragged);
         }
         setup.replaceMainPlace(this.getText(), dragged);
+        if (setup.getFieldPlayers().contains(this.mainName)) {
+            setup.replaceFieldPlayer(this.getText(), dragged);
+        }
         this.setText(dragged);
         setup.updatePlaceMap(this);
         return true;

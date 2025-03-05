@@ -9,6 +9,12 @@ public class SubPlace extends Place {
     }
 
     public boolean handlePlace(Setup setup, String dragged) {
+        // Ensure only field players can be placed in sub spots
+        if (!setup.getFieldPlayers().contains(dragged)) {
+            System.out.println("Invalid assignment: Player must be on the field.");
+            return false;
+        }
+
         if (setup.getSubs().contains(dragged)) {
             resetExistingPlace(setup, dragged);
         }

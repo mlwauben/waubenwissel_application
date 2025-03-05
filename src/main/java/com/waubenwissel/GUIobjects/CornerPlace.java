@@ -9,6 +9,12 @@ public class CornerPlace extends Place {
     }
 
     public boolean handlePlace(Setup setup, String dragged) {
+        // Ensure only field players can be placed in corner spots
+        if (!setup.getFieldPlayers().contains(dragged)) {
+            System.out.println("Invalid assignment: Player must be on the field.");
+            return false;
+        }
+
         if (setup.getCorners().contains(dragged)) {
             resetExistingPlace(setup, dragged);
         }
