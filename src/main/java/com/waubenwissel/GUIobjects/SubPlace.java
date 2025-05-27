@@ -1,6 +1,8 @@
 package com.waubenwissel.GUIobjects;
 
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class SubPlace extends Place {
 
@@ -11,7 +13,12 @@ public class SubPlace extends Place {
     public boolean handlePlace(Setup setup, String dragged) {
         // Ensure only field players can be placed in sub spots
         if (!setup.getFieldPlayers().contains(dragged)) {
-            System.out.println("Invalid assignment: Player must be on the field.");
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setTitle("Speler niet op het veld");
+            alert.setHeaderText(null);
+            alert.setContentText("Een speler moet eerst op het veld staan voordat die gewisseld kan worden.");
+            alert.showAndWait();
+
             return false;
         }
 
