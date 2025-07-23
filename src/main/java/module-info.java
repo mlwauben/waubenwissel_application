@@ -1,6 +1,7 @@
 @SuppressWarnings("module")
 module waubenwissel.application {
     exports com.waubenwissel;
+    exports com.waubenwissel.GUIobjects;
 
     requires java.desktop;
     requires javafx.base;

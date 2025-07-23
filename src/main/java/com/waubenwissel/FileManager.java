@@ -2,11 +2,13 @@ package com.waubenwissel;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.awt.Desktop;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -26,7 +28,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class FileManager {
-    public static void readInPlayers(VBox playerList) {
+    
+    public void readInPlayers(VBox playerList) {
         String filePath = "src\\main\\resources\\com\\waubenwissel\\txt\\team.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -39,50 +42,94 @@ public class FileManager {
         }
     }
 
-    public static File makeExcelFile(TabPane quarterTabs) throws IOException {
+    public File makeExcelFile(TabPane quarterTabs, String date, String opponent) throws IOException {
         //Create excel file
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("First Sheet");
+        URL url = getClass().getResource("/com/waubenwissel/xlsx/template.xlsx");
 
-        //Fill the file
-        fillExcelFile(sheet, quarterTabs);
-
-        File file = getFile(".xlsx");
-        try (FileOutputStream outputStream = new FileOutputStream(file)) {
-            workbook.write(outputStream);
-        } catch (Exception e) {
-            System.out.println("File not closed");
+        if (url == null) {
+            throw new FileNotFoundException("Excel template not found in classpath.");
         }
 
-        workbook.close();
+        try (InputStream inputStream = url.openStream()) {
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            
+            //Fill the file
+            fillExcelFile(sheet, quarterTabs);
+            addSpecialInfo(sheet, date, opponent);
 
-        return file;
+            File file = getFile(".xlsx");
+            try (FileOutputStream outputStream = new FileOutputStream(file)) {
+                workbook.write(outputStream);
+            } catch (Exception e) {
+                System.out.println("File not closed");
+            }
+
+            workbook.close();
+
+            return file;
+        }
     }
 
-    public static void fillExcelFile(Sheet sheet, TabPane quarterTabs) {
+    public void fillExcelFile(Sheet sheet, TabPane quarterTabs) {
+        int[] startingPoint = {5,1};
         int i = 0;
-        int j = 2;
+        int j = 0;
         for (Tab tab : quarterTabs.getTabs()) {
             HBox contentPane = (HBox) tab.getContent(); 
             for (Node setup : contentPane.getChildren()) {
-                Row row = sheet.createRow(j);
                 Setup s = (Setup) setup;
-                for (Node place : s.getChildren()) {
-                    Place p = (Place) place;
-    
-                    Cell cell = row.createCell(i);
-                    cell.setCellValue(p.getText());
-                    i++;
-                }
-                j++;
-                i = 0;
+                fillSetup(sheet, s, startingPoint[0]+j, startingPoint[1]+i, i);
+
+                i = (i == 0) ? 8 : 0;
             }
+            j += 18;
         }
     }
 
-    public static void makePng(TabPane quarterTabs) throws IOException {
+    private void addSpecialInfo(Sheet firstSheet, String date, String opponent) {
+        //Add opposition
+        firstSheet.getRow(1).getCell(0).setCellValue("WISSELSCHEMA " + opponent);
+
+        //Add date with dd-MM-yyyy
+        firstSheet.getRow(1).getCell(6).setCellValue("Datum: " + date);
+
+        //Add absentees
+        Row absenteesRow = firstSheet.getRow(1);
+        Cell absenteesCell = absenteesRow.getCell(9);
+        //TO DO:: Look could be nicer
+        // absenteesCell.setCellValue("Afwezig: " + absentees.toString());
+    }
+
+    public void fillSetup(Sheet sheet, Setup s, int row, int column, int side) {
+        int[][] coords = {  {0,0},{0,2},{0,4},
+                            {3,0},{3,2},{3,4},
+                                  {6,0},
+                            {5,2},      {6,4},
+                                  {7,2},
+                                  {9,2},
+                            {12,0},{13,0},{14,0},{12,3},
+                            {13,3},{12,2},{13,2},{14,2},
+                            {12,5},{13,5}};
+        for (int i = 0; i < coords.length; i++) {
+            Place p = (Place) s.getChildren().get(i);
+            sheet.getRow(row+coords[i][0]).getCell(column+coords[i][1]).setCellValue(p.getText());
+
+        }
+        int[][] cornerCoords = {{2,6},{3,6},{4,6}};
+        if (side != 0) {
+            int[][] rightCoords = {{6,-2},{7,-2},{8,-2}};
+            cornerCoords = rightCoords;
+        } 
+        for (int i = 0; i < cornerCoords.length; i++) {
+            Place p = (Place) s.getChildren().get(i+21);
+            sheet.getRow(row+cornerCoords[i][0]).getCell(column+cornerCoords[i][1]).setCellValue(p.getText());
+        }
+    }
+
+    public void makePng(TabPane quarterTabs, String date, String opponent) throws IOException {
         com.spire.xls.Workbook workbook = new com.spire.xls.Workbook();
-        workbook.loadFromFile(makeExcelFile(quarterTabs).getAbsolutePath());
+        workbook.loadFromFile(makeExcelFile(quarterTabs, date, opponent).getAbsolutePath());
         Worksheet sheet = workbook.getWorksheets().get(0);
     
         File file = getFile(".png");
@@ -95,7 +142,7 @@ public class FileManager {
         }
     }
     
-    public static File getFile(String type) {
+    public File getFile(String type) {
         File desktopDir = new File(System.getProperty("user.home"), "Desktop");
         String pathToDesktop = desktopDir.getPath();
         String s = "testWisselschema";
@@ -105,4 +152,21 @@ public class FileManager {
         }
         return file;
     }
+
+    // private String createFileTitle() {
+    //     String date = "no date";
+    //     if (!(dateSign.getValue() == null)) {
+    //         LocalDate d = dateSign.getValue();
+    //         date = d.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    //     }
+    //     String opponent;
+    //     if (awayGame.isSelected()) {
+    //         opponent = " wisselschema " + opponentTag.getText() + " - " + teamName;
+    //     }
+    //     else {
+    //         opponent = " wisselschema " + teamName + " - " + opponentTag.getText();
+    //     }
+
+    //     return date + opponent;
+    // }
 }
