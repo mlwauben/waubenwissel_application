@@ -3,9 +3,8 @@ package com.waubenwissel;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
+import com.waubenwissel.GUIobjects.Game;
 import com.waubenwissel.GUIobjects.Setup;
 
 import javafx.fxml.FXML;
@@ -28,6 +27,7 @@ public class Controller {
     private TextField opponentSign;
 
     FileManager manager = new FileManager();
+    Game game = new Game();
 
     @FXML
     public void initialize() {
@@ -50,6 +50,12 @@ public class Controller {
             contentPane.getChildren().add(setups[i * 2]);
             contentPane.getChildren().add(setups[i * 2 + 1]);
         }
+
+        // game.setSetups(setups);
+        game.setOpponent(opponentSign.getText());
+        if (!(dateSign.getValue() == null)) {
+            game.setDate(dateSign.getValue());
+        }
     }
 
     /**
@@ -58,21 +64,12 @@ public class Controller {
      */
     @FXML
     private void openExcelFile() throws IOException {
-        File file = manager.makeExcelFile(quarterTabs, getDate(), opponentSign.getText());
+        File file = manager.makeExcelFile(quarterTabs, game);
         try {
             Desktop.getDesktop().open(file);
         } catch (Exception e) {
             System.out.println("File not closed");
         }
-    }
-
-    private String getDate() {
-        String date = "01-01-22";
-        if (!(dateSign.getValue() == null)) {
-            LocalDate d = dateSign.getValue();
-            date = d.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-        }
-        return date;
     }
 
     /**
@@ -81,7 +78,7 @@ public class Controller {
      */
     @FXML
     private void makePngFile() throws IOException {
-        manager.makePng(quarterTabs, getDate(), opponentSign.getText());
+        manager.makePng(quarterTabs, game);
     }
 }
  

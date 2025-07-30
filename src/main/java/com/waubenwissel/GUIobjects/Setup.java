@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javafx.scene.layout.FlowPane;
+import javafx.util.Pair;
 
 public class Setup extends FlowPane {
 
@@ -149,11 +150,11 @@ public class Setup extends FlowPane {
         }
 
         // Step 1: Create a mapping for the next setup
-        Map<String, String> newAssignments = new HashMap<>();
+        Map<String, Pair<String, Integer>> newAssignments = new HashMap<>();
 
         // Step 2: Copy current field players to the next setup
         for (String fieldPlace : mainNames) {
-            newAssignments.put(fieldPlace, placeMap.get(fieldPlace).getText());
+            newAssignments.put(fieldPlace, new Pair<String, Integer>(placeMap.get(fieldPlace).getText(), placeMap.get(fieldPlace).getHoverValue() + 1));
         }
 
         // Step 3: Handle substitutions
@@ -182,18 +183,25 @@ public class Setup extends FlowPane {
 
                 // Only swap if a sub has been chosen
                 if (!subPlayer.equals(subSpot)) {  
-                    newAssignments.put(benchSpot, subPlayer); // Sub moves to bench
-                    newAssignments.put(subSpot, subSpot);     // Reset sub spot
-                    newAssignments.put(subInField.getMainName(), benchPlayer); // Bench moves to field
+                    newAssignments.put(benchSpot, new Pair<String, Integer>(subPlayer, 0)); // Sub moves to bench
+                    newAssignments.put(subSpot, new Pair<String, Integer>(subSpot, 0));     // Reset sub spot
+                    newAssignments.put(subInField.getMainName(), new Pair<String, Integer>(benchPlayer, 1)); // Bench moves to field
                 }
             }
         }
 
         // Step 4: Apply assignments to the next setup
-        for (Map.Entry<String, String> entry : newAssignments.entrySet()) {
+        for (Map.Entry<String, Pair<String, Integer>> entry : newAssignments.entrySet()) {
             Place nextPlace = nextSetup.getPlaceByName(entry.getKey());
             if (nextPlace != null) {
-                nextPlace.setText(entry.getValue());
+                nextPlace.setText(entry.getValue().getKey());
+                nextPlace.setHoverValue(entry.getValue().getValue());
+                nextSetup.updatePlaceMap(nextPlace);
+
+                nextSetup.replaceMainPlace(nextPlace.getText(), entry.getValue().getKey());
+                if (nextSetup.getFieldPlayers().contains(nextPlace.getMainName())) {
+                    nextSetup.replaceFieldPlayer(nextPlace.getText(), entry.getValue().getKey());
+                }
             }
         }
     }

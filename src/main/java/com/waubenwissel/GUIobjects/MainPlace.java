@@ -1,11 +1,13 @@
 package com.waubenwissel.GUIobjects;
 
 import javafx.scene.Node;
+import javafx.scene.control.Tooltip;
 
 public class MainPlace extends Place {
 
     public MainPlace(String mainName, String name) {
         super(mainName, name);
+        setTooltip(new Tooltip("Rondes in het veld: 1"));
     }
 
     public boolean handlePlace(Setup setup, String dragged) {
@@ -38,5 +40,13 @@ public class MainPlace extends Place {
             }
         }
     }
-    
+
+    public void setHoverValue(int hoverValue) {
+        getTooltip().setText("Rondes in het veld: " + hoverValue);
+    }
+
+    public int getHoverValue() {
+        String tooltext = getTooltip().getText();
+        return Integer.parseInt(tooltext.substring(tooltext.length() - 1));
+    } 
 }

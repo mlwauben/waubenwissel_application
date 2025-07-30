@@ -8,14 +8,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.LocalDate;
 import java.awt.Desktop;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.spire.xls.Worksheet;
+import com.waubenwissel.GUIobjects.Game;
 import com.waubenwissel.GUIobjects.Place;
 import com.waubenwissel.GUIobjects.Player;
 import com.waubenwissel.GUIobjects.Setup;
@@ -42,7 +42,7 @@ public class FileManager {
         }
     }
 
-    public File makeExcelFile(TabPane quarterTabs, String date, String opponent) throws IOException {
+    public File makeExcelFile(TabPane quarterTabs, Game game) throws IOException {
         //Create excel file
         URL url = getClass().getResource("/com/waubenwissel/xlsx/template.xlsx");
 
@@ -55,10 +55,13 @@ public class FileManager {
             Sheet sheet = workbook.getSheetAt(0);
             
             //Fill the file
+            String opponent = game.getOpponent();
+            LocalDate date = game.getDate();
+            
             fillExcelFile(sheet, quarterTabs);
             addSpecialInfo(sheet, date, opponent);
 
-            File file = getFile(".xlsx");
+            File file = getFile(".xlsx", game);
             try (FileOutputStream outputStream = new FileOutputStream(file)) {
                 workbook.write(outputStream);
             } catch (Exception e) {
@@ -87,18 +90,18 @@ public class FileManager {
         }
     }
 
-    private void addSpecialInfo(Sheet firstSheet, String date, String opponent) {
+    private void addSpecialInfo(Sheet firstSheet, LocalDate date, String opponent) {
         //Add opposition
         firstSheet.getRow(1).getCell(0).setCellValue("WISSELSCHEMA " + opponent);
 
         //Add date with dd-MM-yyyy
         firstSheet.getRow(1).getCell(6).setCellValue("Datum: " + date);
 
-        //Add absentees
-        Row absenteesRow = firstSheet.getRow(1);
-        Cell absenteesCell = absenteesRow.getCell(9);
-        //TO DO:: Look could be nicer
-        // absenteesCell.setCellValue("Afwezig: " + absentees.toString());
+        // TODO Add absentees
+        // Row absenteesRow = firstSheet.getRow(1);
+        // Cell absenteesCell = absenteesRow.getCell(9);
+        // //TO DO:: Look could be nicer
+        // // absenteesCell.setCellValue("Afwezig: " + absentees.toString());
     }
 
     public void fillSetup(Sheet sheet, Setup s, int row, int column, int side) {
@@ -127,12 +130,12 @@ public class FileManager {
         }
     }
 
-    public void makePng(TabPane quarterTabs, String date, String opponent) throws IOException {
+    public void makePng(TabPane quarterTabs, Game game) throws IOException {
         com.spire.xls.Workbook workbook = new com.spire.xls.Workbook();
-        workbook.loadFromFile(makeExcelFile(quarterTabs, date, opponent).getAbsolutePath());
+        workbook.loadFromFile(makeExcelFile(quarterTabs, game).getAbsolutePath());
         Worksheet sheet = workbook.getWorksheets().get(0);
     
-        File file = getFile(".png");
+        File file = getFile(".png", game);
         sheet.saveToImage(file.getAbsolutePath());
     
         try {
@@ -142,31 +145,14 @@ public class FileManager {
         }
     }
     
-    public File getFile(String type) {
+    public File getFile(String type, Game game) {
         File desktopDir = new File(System.getProperty("user.home"), "Desktop");
         String pathToDesktop = desktopDir.getPath();
-        String s = "testWisselschema";
+        String s = game.getDate().toString() + " wisselschema " + game.getOpponent(); 
         File file = new File(pathToDesktop+System.getProperty("file.separator") + s + type);
         if (System.getProperty("user.name").equals("mikaw")) {
             file = new File("C:\\Users\\mikaw\\OneDrive\\Desktop\\wisselschema" + type);
         }
         return file;
     }
-
-    // private String createFileTitle() {
-    //     String date = "no date";
-    //     if (!(dateSign.getValue() == null)) {
-    //         LocalDate d = dateSign.getValue();
-    //         date = d.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-    //     }
-    //     String opponent;
-    //     if (awayGame.isSelected()) {
-    //         opponent = " wisselschema " + opponentTag.getText() + " - " + teamName;
-    //     }
-    //     else {
-    //         opponent = " wisselschema " + teamName + " - " + opponentTag.getText();
-    //     }
-
-    //     return date + opponent;
-    // }
 }

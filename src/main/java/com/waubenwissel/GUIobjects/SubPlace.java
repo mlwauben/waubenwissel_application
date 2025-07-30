@@ -3,11 +3,13 @@ package com.waubenwissel.GUIobjects;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Tooltip;
 
 public class SubPlace extends Place {
 
     public SubPlace(String mainName, String name) {
         super(mainName, name);
+        setTooltip(new Tooltip("Rondes in het veld: 0"));
     }
 
     public boolean handlePlace(Setup setup, String dragged) {
@@ -18,6 +20,10 @@ public class SubPlace extends Place {
             alert.setHeaderText(null);
             alert.setContentText("Een speler moet eerst op het veld staan voordat die gewisseld kan worden.");
             alert.showAndWait();
+
+            for (String player : setup.getFieldPlayers()) {
+                System.out.println(player);
+            }
 
             return false;
         }

@@ -13,6 +13,7 @@ public abstract class Place extends Label {
         setText(name);
         setPrefWidth(100);
         setAlignment(Pos.CENTER);
+
         //Checks if the dragged label has text
         setOnDragOver(event -> {
             if (event.getGestureSource() != this && event.getDragboard().hasString()) {
@@ -48,5 +49,14 @@ public abstract class Place extends Label {
 
     public boolean isFilled() {
         return !this.getText().equals(mainName);
+    }
+
+    public void setHoverValue(int hoverValue) {
+        getTooltip().setText("Rondes in het veld: " + hoverValue);
+    }
+
+    public int getHoverValue() {
+        String tooltext = getTooltip().getText();
+        return Integer.parseInt(tooltext.substring(tooltext.length() - 1));
     }
 }
