@@ -11,7 +11,9 @@ public abstract class Place extends Label {
     public Place(String mainName, String name) {
         this.mainName = mainName;
         setText(name);
-        setPrefWidth(100);
+        setMinWidth(200);  
+        setMaxWidth(Double.MAX_VALUE);
+        setWrapText(true);    
         setAlignment(Pos.CENTER);
 
         //Checks if the dragged label has text

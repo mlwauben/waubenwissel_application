@@ -3,6 +3,9 @@
     -fx-text-fill: #27005e;
     -fx-padding: 5px;
     -fx-font-family: "Helvetica Neue", sans-serif;
+    -fx-font-size: 1.2em;
+    -fx-pref-width: 12em;
+    -fx-alignment: CENTER;
 }
 
 /* Button styling */
@@ -31,7 +34,8 @@
 
 .tab {
     -fx-background-insets: 0 1 0 1,0,0;
-    -fx-pref-height: 30;
+    -fx-pref-width: 7em;
+    -fx-pref-height: 2em;
     -fx-cursor: HAND;
     -fx-font-family: "Helvetica Neue", sans-serif;
 }
@@ -45,18 +49,52 @@
 }
 
 .tab .tab-label { 
-    -fx-alignment: CENTER;
     -fx-text-fill: #828282;
-    -fx-font-size: 15px;
+    -fx-font-size: 1.3em;
     -fx-font-weight: bold;
 }
 
 .tab:selected .tab-label { 
-    -fx-alignment: CENTER;
     -fx-text-fill: #FFFFFF;
 }
 
 .tab-pane:top *.tab-header-area {
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.416667em 0.166667em 0.0em 0.0em;
+}
+
+/* General ScrollPane scrollbar styling */
+.scroll-pane .scroll-bar {
+    -fx-background-color: transparent;  /* hide the default track background */
+}
+
+/* Track behind the thumb */
+.scroll-pane .scroll-bar .track {
+    -fx-background-color: #e6e6e6;      /* light grey track */
+    -fx-background-insets: 0;
+    -fx-background-radius: 4px;         /* rounded corners */
+}
+
+/* Thumb (draggable part) */
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #004936;      /* dark green */
+    -fx-background-insets: 0;
+    -fx-background-radius: 4px;
+}
+
+/* Hover effect on thumb */
+.scroll-pane .scroll-bar .thumb:hover {
+    -fx-background-color: #003023;      /* darker green on hover */
+}
+
+.scroll-pane .scroll-bar .increment-button,
+.scroll-pane .scroll-bar .decrement-button {
+    -fx-background-color: transparent;  /* make them invisible */
+    -fx-padding: 0;                     /* remove extra space */
+    -fx-shape: "";                       /* remove any arrow shape */
+    -fx-background-insets: 0;
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
 }

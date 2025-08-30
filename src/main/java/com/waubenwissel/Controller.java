@@ -9,6 +9,8 @@ import com.waubenwissel.GUIobjects.Setup;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
@@ -25,6 +27,8 @@ public class Controller {
     private DatePicker dateSign;
     @FXML
     private TextField opponentSign;
+    @FXML
+    private ScrollPane scrollPane;
 
     FileManager manager = new FileManager();
     Game game = new Game();
@@ -55,6 +59,19 @@ public class Controller {
         game.setOpponent(opponentSign.getText());
         if (!(dateSign.getValue() == null)) {
             game.setDate(dateSign.getValue());
+        }
+
+        // Mouse wheel scroll multiplier
+        scrollPane.getContent().setOnScroll(event -> {
+            double deltaY = event.getDeltaY() * 5; 
+            scrollPane.setVvalue(scrollPane.getVvalue() - deltaY / scrollPane.getContent().getBoundsInLocal().getHeight());
+            event.consume();
+        });
+
+        // Optional: increase unit increment for dragging scrollbar
+        ScrollBar vBar = (ScrollBar) scrollPane.lookup(".scroll-bar:vertical");
+        if (vBar != null) {
+            vBar.setUnitIncrement(20);
         }
     }
 
